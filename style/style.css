@@ -1,0 +1,49 @@
+body {
+  font-size: 14px;
+  }
+
+.container li{
+  padding: 6px 0;
+  font-size: 16px;
+}
+
+.dropdown:hover .caret{
+    transform: rotate(180deg);
+    transition: 0.2s;
+    margin-bottom: 5px;
+}
+.menu{
+    list-style: none;
+    padding: 0.2em 0.5em;
+    border: 1px #363a43 solid;
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    display: none;
+}
+.menu li{
+    padding: 0.3em 0.5em;
+    margin: 0.3em 0;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+.menu li:hover{
+    background-color: #2a2d35;
+}
+.dropdown:hover .menu{
+    display: block;
+}
+
+.lightMode-body{
+  background-color: hsl(0, 0%, 98%);
+  color: hsl(200, 15%, 8%);
+}
+.darkMode-body{
+  background-color: hsl(207, 26%, 17%);
+  color: hsl(0, 0%, 100%);
+}
+.lightMode-element{
+  background-color: hsl(0, 0%, 100%);
+}
+.darkMode-element{
+  background-color: hsl(209, 23%, 22%);
+}
