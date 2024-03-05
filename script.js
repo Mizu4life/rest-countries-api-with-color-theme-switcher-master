@@ -17,7 +17,6 @@ function filterCountries(name = "all", region = false) {
 }
 function createCard(data){
     let name = data["name"]["common"];
-    debugger;
     let population = data["population"];
     let region = data["region"];
     let capital = data["capital"];
@@ -203,7 +202,7 @@ async function filterByRegion(region){
     const cards = document.querySelector('.country-cards');
     cards.innerHTML='';
     for (let name in countriesNames){
-        if (data.toLowerCase() != "israel"){
+        if (name.toLowerCase() != "israel"){
         const data = await filterCountries(countriesNames[name]);
             createCard(data);
         }
