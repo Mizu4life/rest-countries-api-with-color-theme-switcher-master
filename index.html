@@ -14,14 +14,14 @@
 <body class="darkMode-body">
     <header id="toggleMode" class="darkMode-element flex justify-between items-center px-4 py-8 md:px-6 md:py-4 lg:px-10">
         <h1 class="font-bold md:text-2xl">Where in the world?</h1>
-        <div class="mode       w-[115px] flex justify-between items-center rounded-full p-2 cursor-pointer border border-transparent hover:bg-[#333741] hover:text-[#9fa5b5] hover:border-white" onclick="toggleDarkMode()">
+        <div class="w-[115px] flex justify-between items-center rounded-full p-2 cursor-pointer border border-transparent hover:bg-[#333741] hover:text-[#9fa5b5] hover:border-white" onclick="toggleDarkMode()">
             <i class="fa fa-moon fa-rotate-by" style="--fa-rotate-angle: -25deg;"></i>
             <span class="lg:font-bold">Dark Mode</span>
         </div>
     </header>
     <main class="m-4 md:mx-6 md:my-4 lg:mx-10">
         <section class="flex flex-col md:flex-row md:items-center justify-between">
-            <div id="toggleMode" class="search-bar       darkMode-element flex justify-start items-center h-12 md:w-[450px]">
+            <div id="toggleMode" class="darkMode-element flex justify-start items-center h-12 md:w-[450px]">
                 <i class="fa-solid fa-magnifying-glass mx-6"></i>
                 <input type="search" placeholder="Search for a country..." id="searchInput" oninput="searchCountryNames(document.querySelector('#searchInput').value);" class="w-full h-full px-2 bg-transparent focus:outline-none"/> 
             </div>
