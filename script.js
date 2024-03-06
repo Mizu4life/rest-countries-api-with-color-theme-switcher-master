@@ -1,28 +1,39 @@
-function filterCountries(name = "all", region = false) {
+// add the unwanted countries to tha array, to filter it out of the web
+const unwanted = ['Israel'];
+const lowerCaseUnwanted = unwanted.map(e => e.toLowerCase());
+
+async function filterCountries(name = "all", region = false) {
     let url = "https://restcountries.com/v3.1/" 
     if (region){
         url += `region/`;
     } else if (name !== "all"){
         url += `name/`;
     } 
-    return fetch(`${url}${name}`)
+    return await fetch(`${url}${name}`)
     .then(response => response.json())
     .then((data) => {
-        if(name.toLowerCase() !== "israel"){
+        if(!lowerCaseUnwanted.includes(name.toLowerCase())){
             if(name !== "all" && region === false){
+                // return one country data
                 return data["0"];
-            } else {return data;}
+            } else {
+                // return all countries came in the filter
+                return data;
+            }
+            
         }
     });
 }
 function createCard(data){
+    // data is an object contains a country info
     let name = data["name"]["common"];
-    let population = data["population"];
+    let population = data["population"].toLocaleString('en'); //format the number to have a thousand separator
     let region = data["region"];
     let capital = data["capital"];
     let flag = data[`flags`]["png"];
 
-    const cards = document.querySelector('.country-cards');
+    // creat a card and add it to the cards container
+    // const cards = document.querySelector('.cards-container');
     const card = document.createElement('div');
     const mode = checkMode();
     card.innerHTML = `
@@ -35,17 +46,20 @@ function createCard(data){
             <p><strong>Capital: </strong>${capital}</p>
         </div>
     </div>`;
-    cards.appendChild(card);
+    return card;
+    // cards.appendChild(card);
 }
 
 async function createCountryPage(country, backHome = true){
     let data = await filterCountries(country);
-    let nativeName = data["name"]['nativeName'][Object.keys(data["name"]['nativeName'])[0]]["common"];
-    let population = data["population"];
+    let nativeName = data["name"]['nativeName'][Object.keys(data["name"]['nativeName'])[0]]["common"]; //get the first common name in "nativeName" object
+    let population = data["population"].toLocaleString('en');  //format the number to have a thousand separator
     let region = data["region"];
     let subregion = data["subregion"];
     let capital = data["capital"];
-    let languages =[];
+
+    //check if there are more than one language
+    let languages =[]; 
     for (const languageKey in data["languages"]){
         languages.push(data["languages"][languageKey]);
     }
@@ -54,8 +68,6 @@ async function createCountryPage(country, backHome = true){
     let tld = data["tld"][0];
     let flag = data[`flags`]["png"];
 
-    console.log(languages.join(", "));
-
     // if there are border countries, get the country names of those countries and add them
     const mode = checkMode();
     let borderButtons =[];
@@ -63,7 +75,9 @@ async function createCountryPage(country, backHome = true){
     if  (borders != undefined) {
         for(let border in borders){
             const name = await findCountryByCCA3(borders[border]);
-            if(name.toLowerCase() != 'israel'){
+            // filtering unwanted countries from borders
+            if(!lowerCaseUnwanted.includes(name.toLowerCase())){
+                // using ("") in tag attributes caused some trobles when the text turns into html
             borderButtons.push(`<div id='toggleMode' class='${mode}'> <button type='reset' class='min-w-24 px-6 py-1 cursor-pointer hover:bg-[#323741]' onclick='createCountryPage("${name}", false)'>${name}</button> </div> `);
             }
         }
@@ -147,7 +161,8 @@ async function getAllCountriesNames(CountriesDate ="all"){
         data = CountriesDate;
     }
     let countries = [];
-    countries = data.map(countryInfo  => countryInfo["name"]["common"]); 
+    countries = data.map(countryInfo  => countryInfo["name"]["common"]).sort(); 
+    countries = countries.filter(country => !lowerCaseUnwanted.includes(country.toLowerCase()));
     return countries;
 }
 // getAllCountriesNames();
@@ -164,21 +179,23 @@ function matchSearch(countries,name){
 
 async function searchCountryNames(search){
     if(search != ''){
-        if (search.toLowerCase() === 'israel'){
-            const cards = document.querySelector('.country-cards');
-            cards.innerHTML='';
+        const container = document.querySelector('.cards-container');
+        container.innerHTML='';
+        if (lowerCaseUnwanted.includes(search.toLowerCase())){
+            // const cards = document.querySelector('.cards-container');
+            // cards.innerHTML='';
             const p = document.createElement('p');
             p.textContent="We don't do that here :)";
-            cards.appendChild(p);
+            container.appendChild(p);
         } else {
             const countries = await getAllCountriesNames();
             const matchingNames =  await matchSearch(countries,search);
-            const cards = document.querySelector('.country-cards');
-            cards.innerHTML='';
+            let cards = [];
             for(const name of matchingNames) {
                 const data = await filterCountries(name);
-                createCard(data);
+                cards.push(createCard(data));
             }
+            cards.forEach(card =>container.appendChild(card));
         }
     } else {
         showAllCountries();
@@ -188,25 +205,30 @@ async function searchCountryNames(search){
 
 async function showAllCountries(){
     const countries = await getAllCountriesNames();
-    const cards = document.querySelector('.country-cards');
-    cards.innerHTML='';
+    const container = document.querySelector('.cards-container');
+    container.innerHTML='';
+    let cards = [];
     for (let country in countries){
         const data = await filterCountries(countries[country]);
-        createCard(data);
+        cards.push(createCard(data));
     }
+    cards.forEach(card =>container.appendChild(card));
 }
 async function filterByRegion(region){
     const countriesData = await filterCountries(region, true);
     const countriesNames = await getAllCountriesNames(countriesData)
 
-    const cards = document.querySelector('.country-cards');
-    cards.innerHTML='';
-    for (let name in countriesNames){
-        if (name.toLowerCase() != "israel"){
-        const data = await filterCountries(countriesNames[name]);
-            createCard(data);
+    const container = document.querySelector('.cards-container');
+    container.innerHTML='';
+    let cards = [];
+            // for(const name of matchingNames) {
+            //     const data = await filterCountries(name);
+            // }
+        for (let name in countriesNames){
+                const data = await filterCountries(countriesNames[name]);
+                cards.push(createCard(data));
         }
-    }
+        cards.forEach(card =>container.appendChild(card));
 }
 
 async function findCountryByCCA3(cca3){
