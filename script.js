@@ -216,9 +216,8 @@ const sortArrayFunction = (a, b) => {
 // the faster method, fetch everything once and create cards
 async function showAllCountries(){
         const countriesData = await filterCountries();
-        const sortedCountriesData= countriesData.sort(sortArrayFunction);
+        const sortedCountriesData= countriesData.sort(sortArrayFunction).filter(country => !lowerCaseUnwanted.includes(country["name"]["common"].toLowerCase()));
 
-        debugger;
         const container = document.querySelector('.cards-container');
         container.innerHTML='';
         let cards = [];
